@@ -29,11 +29,11 @@ The tool was built iteratively and then tested adversarially. That testing uncov
 
 ## 🏗️ Overview
 
-![Network Reconnaissance Parser Workflow](assets1/Network_Reconnaissance_Parser_Workflow(1).png)
+![Network Reconnaissance Parser Workflow](assets1/Network_Reconnaissance_Parser_Workflow.png)
 
 ## 🏗️ How it works
 
-![nmap-parser execution flow: input validation, scan acquisition or reuse, and XSS-safe HTML report generation](assets1/workflow.png)
+![nmap-parser execution flow: input validation, scan acquisition or reuse, and XSS-safe HTML report generation](assets1/workflow(1).png)
 
 ### Components
 
