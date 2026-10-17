@@ -29,7 +29,7 @@ The tool was built iteratively and then tested adversarially. That testing uncov
 
 ## 🏗️ Overview
 
-![Network Reconnaissance Parser Workflow](assets1/Network_Reconnaissance_Parser_Workflow (1).png)
+![Network Reconnaissance Parser Workflow](assets1/Network_Reconnaissance_Parser_Workflow(1).png)
 
 ## 🏗️ How it works
 
