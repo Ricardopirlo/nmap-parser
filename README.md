@@ -29,7 +29,7 @@ The tool was built iteratively and then tested adversarially. That testing uncov
 
 ## 🏗️ Overview
 
-![Suricata lab architecture diagram](assets/IDS_Rule_Tuning_Lab_Infographic.png)
+![Network Reconnaissance Parser Workflow](assets1/Network_Reconnaissance_Parser_Workflow.png)
 
 ## 🏗️ How it works
 
