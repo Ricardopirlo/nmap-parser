@@ -33,23 +33,55 @@ The tool was built iteratively and then tested adversarially. That testing uncov
 
 ## 🏗️ How it works
 
-```mermaid
 flowchart TD
-    A["Run: nmap-parser.sh target scan.raw report.html"] --> B{"3 arguments and valid IP/CIDR?"}
-    B -- "No" --> X["Print usage, exit 1"]
-    B -- "Yes" --> C{"html_report.sh found next to the script?"}
-    C -- "No" --> Y["Fail fast, exit 1"]
-    C -- "Yes" --> D{"scan.raw newer than 30 min?"}
-    D -- "Yes" --> E{"Overwrite? y/n"}
-    E -- "y" --> F["sudo nmap -sV target, output to scan.raw"]
-    E -- "n" --> H
-    D -- "No" --> F
-    F -- "sudo or nmap fails" --> Z["Delete partial scan.raw, exit 1"]
-    F --> G["csplit on blank lines: one chunk per host"]
-    G --> H["Parse each chunk: IP, open ports, service + version"]
-    H --> I["HTML-encode untrusted text, build table"]
-    I --> J["report.html"]
-```
+    %% Estilos semánticos
+    classDef startEnd fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef step fill:#1e293b,stroke:#475569,stroke-width:1px,color:#f8fafc;
+    classDef decision fill:#1e293b,stroke:#f59e0b,stroke-width:1.5px,color:#f8fafc;
+    classDef error fill:#450a0a,stroke:#ef4444,stroke-width:1.5px,color:#fca5a5;
+    classDef success fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#a7f3d0;
+
+    START(["▶ Run: nmap-parser.sh target raw report"]):::startEnd
+
+    subgraph SEC_VAL ["1. Validación y Entorno"]
+        D_ARGS{"¿3 argumentos y<br/>formato IP/CIDR?"}:::decision
+        D_SCRIPT{"¿Existe<br/>html_report.sh?"}:::decision
+        ERR_ARGS["❌ Print usage (exit 1)"]:::error
+        ERR_DEP["❌ Fail fast (exit 1)"]:::error
+    end
+
+    subgraph SEC_SCAN ["2. Adquisición de Datos"]
+        D_CACHE{"¿scan.raw tiene<br/>&lt; 30 min?"}:::decision
+        D_OVER{"¿Sobrescribir?<br/>(y/n)"}:::decision
+        OP_SCAN["sudo nmap -sV target &gt; scan.raw"]:::step
+        ERR_SCAN["❌ Borrar scan.raw parcial (exit 1)"]:::error
+    end
+
+    subgraph SEC_PARSE ["3. Procesamiento y Generación"]
+        OP_SPLIT["csplit: Dividir por host (xx00, xx01...)"]:::step
+        OP_EXTRACT["Parsear IP, puertos abiertos y servicios/versiones"]:::step
+        OP_ENCODE["Sanitizar HTML (XSS safe) y maquetar tabla"]:::step
+        REPORT(["✔ Generar report.html (exit 0)"]):::success
+    end
+
+    %% Conexiones principales
+    START --> D_ARGS
+    D_ARGS -- No --> ERR_ARGS
+    D_ARGS -- Sí --> D_SCRIPT
+    D_SCRIPT -- No --> ERR_DEP
+    D_SCRIPT -- Sí --> D_CACHE
+
+    %% Conexiones escaneo
+    D_CACHE -- No --> OP_SCAN
+    D_CACHE -- Sí --> D_OVER
+    D_OVER -- "y" --> OP_SCAN
+    D_OVER -- "n (reutilizar)" --> OP_SPLIT
+
+    OP_SCAN -- "Fallo sudo/nmap" --> ERR_SCAN
+    OP_SCAN -- "Éxito" --> OP_SPLIT
+
+    %% Conexiones parseo
+    OP_SPLIT --> OP_EXTRACT --> OP_ENCODE --> REPORT
 
 ### Components
 
