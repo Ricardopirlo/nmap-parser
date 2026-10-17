@@ -1,0 +1,10 @@
+# Resultados de escaneo: describen una red real (hosts, servicios, versiones).
+# Nunca se publican.
+*.raw
+xx*
+*.html
+
+# Copias de seguridad y ficheros de prueba
+*.bak
+*.tmp
+prueba*
